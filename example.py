@@ -21,7 +21,7 @@ import auralise
 - [2]listen up!
 
 '''
-def buildConvNetModel(numFr, len_freq, learning_rate=0.0005, model_name = 'vggnet5', dropout_values=[0, 0, 0.25, 0, 0.25], optimiser=None):
+def buildConvNetModel(num_fr, len_freq, learning_rate=0.0005, model_name = 'vggnet5', dropout_values=[0, 0, 0.25, 0, 0.25], optimiser=None):
 	from keras.models import Sequential
 	from keras.layers.core import Dense, Dropout, Activation, Flatten
 	from keras.layers.convolutional import Convolution2D, MaxPooling2D
@@ -30,7 +30,7 @@ def buildConvNetModel(numFr, len_freq, learning_rate=0.0005, model_name = 'vggne
 	''' Keras layer - input argumetns should be updated
 	'''
 	final_freq_num = len_freq
-	final_frame_num = numFr
+	final_frame_num = num_fr
 
 	model = Sequential()
 	num_layers = 5
@@ -45,7 +45,7 @@ def buildConvNetModel(numFr, len_freq, learning_rate=0.0005, model_name = 'vggne
 		if i == 0:
 			model.add(Convolution2D(num_stacks[i], image_patch_sizes[i][0], image_patch_sizes[i][1], 
 												border_mode='same', 
-												input_shape=(num_channel_input, len_freq, num_fr)
+												input_shape=(num_channel_input, len_freq, num_fr),
 												activation='relu'))
 		else:
 			model.add(Convolution2D(num_stacks[i], image_patch_sizes[i][0], image_patch_sizes[i][1], 
@@ -53,7 +53,7 @@ def buildConvNetModel(numFr, len_freq, learning_rate=0.0005, model_name = 'vggne
 												activation='relu'))
 			final_freq_num = final_freq_num / pool_sizes[i][0]
 			final_frame_num = final_frame_num / pool_sizes[i][1]
-		model.add(MaxPooling2D(poolsize=pool_sizes[i]))
+		model.add(MaxPooling2D(pool_size=pool_sizes[i]))
 		if dropout_values[i] is not 0:
 			model.add(Dropout(dropout_values[i]))
 		model.add(LRN2D())
@@ -118,7 +118,7 @@ if __name__ == "__main__":
 	'''
 	W = load_weights()
 	num_conv_layer = len(W)
-	
+
 	# load files
 	print '--- prepare files ---'
 	filenames_src = ['42.mp3', '3695701.mp3', '3696.mp3', '2489888.mp3', 'Chopin.m4a', 'NIN.m4a', 'eminem.mp3', 'neverendingstory.mp3', 'toy.MP3', 'Babybaby.mp3', 'michel.m4a', 'bach.m4a', 'beethoven.m4a', 'Dream.mp3'] # 42 김건모 미련, 3695701 버벌진트 시작이좋아, 3696 김사랑 feeling, 2489888 (락) Time-Bomb 
