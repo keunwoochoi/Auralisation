@@ -36,7 +36,6 @@ def deconv_a_file(filename):
 	if os.path.exists(path_out_here) and os.path.exists(path_img_here):
 		print '%s might be done already, I skip this.' % song_id
 		print 'remove %s and %s to proceed.' % (path_out_here, path_img_here)
-		continue
 	if not os.path.exists(path_out_here):
 		os.makedirs(path_out_here)	
 	if not os.path.exists(path_img_here):
