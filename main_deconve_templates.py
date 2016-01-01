@@ -7,6 +7,7 @@ import sys
 import librosa
 from scipy.misc import imsave
 import auralise
+from multiprocessing import Pool
 
 ''' 2015-09-28 Keunwoo Choi
 - [0] load cnn weights that is learned from keras (http://keras.io) - but you don't need to install it.
@@ -76,26 +77,35 @@ if __name__ == "__main__":
 		path_out_here = path_results + song_id + '/'
 		path_img_here = path_results + song_id + '_img/'
 		SRC = np.load(path_SRC + filename)
-
+		if os.path.exists(path_out_here) and os.path.exists(path_img_here):
+			print '%s might be done already, I skip this.' % song_id
+			print 'remove %s and %s to proceed.' % (path_out_here, path_img_here)
+			continue
 		if not os.path.exists(path_out_here):
 			os.makedirs(path_out_here)	
 		if not os.path.exists(path_img_here):
 			os.makedirs(path_img_here)
 		filename_out = '%s_a_original.wav' % (song_id)	
-		librosa.output.write_wav(path_out_here + filename_out, librosa.istft(SRC, hop_length=N_FFT/2), sr=SAMPLE_RATE, norm=True)
+		librosa.output.write_wav(path_out_here + filename_out, librosa.istft(SRC, hop_length=N_FFT/2), 
+									sr=SAMPLE_RATE, 
+									norm=True)
 
 		for depth in depths:	
 			print '--- deconve! ---'
 			deconvedMASKS = auralise.get_deconve_mask(W[:depth], layer_names, SRC, depth) # size can be smaller than SRC due to downsampling
 
 			print 'result; %d masks with size of %d, %d' % deconvedMASKS.shape
+
 			for deconved_feature_ind, deconvedMASK_here in enumerate(deconvedMASKS):
+
 				MASK = np.zeros(SRC.shape)
 				MASK[0:deconvedMASK_here.shape[0], 0:deconvedMASK_here.shape[1]] = deconvedMASK_here
 				deconvedSRC = np.multiply(SRC, MASK)
 
 				filename_out = '%s_deconved_from_depth_%d_feature_%d.wav' % (song_id, depth, deconved_feature_ind)
-				librosa.output.write_wav(path_out_here + filename_out, librosa.istft(deconvedSRC, hop_length=N_FFT/2), SAMPLE_RATE, norm=True)
+				librosa.output.write_wav(path_out_here + filename_out, librosa.istft(deconvedSRC, hop_length=N_FFT/2), 
+									sr=SAMPLE_RATE, 
+									norm=True)
 				filename_img_out = 'spectrogram_%s_from_depth_%d_feature_%d.png' % (song_id, depth, deconved_feature_ind)
 				imsave(path_img_here + filename_img_out , np.flipud(np.multiply(np.abs(SRC), MASK)))
 
