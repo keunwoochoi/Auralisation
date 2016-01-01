@@ -3,7 +3,6 @@ import numpy as np
 from scipy import signal
 import scipy.ndimage
 
-
 def get_deconve_mask(W, layer_names, SRC, depth):
 	''' 
 	This function returns the deconvolved mask.
@@ -140,20 +139,46 @@ def get_deconve_mask(W, layer_names, SRC, depth):
 		revW_to_use[1:]			= revW[1:]
 
 		# Go!
-		print '-------feed-back- %d' % ind_out
+		print '-------feed-back- %d --' % ind_out
 		unpool_ind = 0
 		deconv_ind = 0
 		for proc_ind, proc_name in enumerate(revProc):
 			if proc_name == 'MP':
-				print 'unpool: %d, %d' % (unpool_ind, proc_ind)
+				# print 'unpool: %d, %d' % (unpool_ind, proc_ind)
 				deconvMAG.append(relu(get_unpooling2d(images=deconvMAG[proc_ind], switches=revSwitch_to_use[unpool_ind])))
 				unpool_ind += 1
 
 			elif proc_name == "conv":
-				print 'deconv: %d, %d' % (deconv_ind, proc_ind)
+				# print 'deconv: %d, %d' % (deconv_ind, proc_ind)
 				deconvMAG.append(get_deconvolve(images=deconvMAG[proc_ind], weights=revW_to_use[deconv_ind]))
 				deconv_ind += 1
 
 		deconved_final_results[ind_out, :, :] = deconvMAG[-1][:,:,:]
 	
 	return deconved_final_results
+
+def load_weights():
+	''' Load keras config file and return W
+	'''
+	import h5py
+	model_name = "vggnet5"
+	keras_filename = "vggnet5_local_keras_model_CNN_stft_11_frame_173_freq_257_folding_0_best.keras"
+	
+	print '--- load model ---'
+	
+	W = []
+	f = h5py.File(keras_filename)
+	for idx in xrange(f.attrs['nb_layers']):
+		key = 'layer_%d' % idx
+		if f[key].keys() != []:
+			W.append(f[key]['param_0'][:,:,:,:])
+		if len(W) == 5:
+			break
+	layer_names = []
+	for idx in xrange(5):
+		layer_names.append('Convolution2D')
+		layer_names.append('MaxPooling2D')
+	layer_names.append('Flatten')
+	
+	return W, layer_names
+
