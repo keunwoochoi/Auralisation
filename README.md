@@ -4,6 +4,7 @@ This repo is for an example of auralisastion of CNNs that is demonstrated on ISM
 ## Files
 auralise.py: includes all required function for deconvolution.
 example.py: includes the whole code - just clone and run it by `python example.py`
+You might need to use older version of Keras, e.g. [this](https://github.com/fchollet/keras/commit/06a1545645d974350d13425246eec53a08cb6ab8) (ver 0.3.x)
 
 ## Folders
 src_songs: includes three songs that I used in my blog posting.
