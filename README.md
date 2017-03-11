@@ -11,13 +11,26 @@ src_songs: includes three songs that I used in my blog posting.
 
 ## Usage
 Load weights that you want to auralise. I'm using this function
-```W = load_weights()```
+`W = load_weights()`
 to load my keras model, it can be anything else.
 `W` is a list of weights for the convnet. (TODO: more details)
 
 Then load source files, get STFT of it. I'm using `librosa`.
 
 Then deconve it with `get_deconve_mask`.
+
+## Citation
+[This paper](https://scholar.google.co.kr/citations?view_op=view_citation&hl=en&user=ZrqdSu4AAAAJ&sortby=pubdate&citation_for_view=ZrqdSu4AAAAJ:8k81kl-MbHgC), or simply,
+
+```
+@inproceedings{choi2015auralisation,
+  title={Auralisation of Deep Convolutional Neural Networks: Listening to Learned Features},
+  author={Choi, Keunwoo and Kim, Jeonghee and Fazekas, George and Sandler, Mark},
+  booktitle={International Society of Music Information Retrieval (ISMIR), Late-Breaking/Demo Session, New York, USA},
+  year={2015},
+  organization={International Society of Music Information Retrieval}
+}
+```
 
 ## External links
 * [The second blog post](https://keunwoochoi.wordpress.com/2016/03/23/what-cnns-see-when-cnns-see-spectrograms/) has more extensive demo. Detailed description will follow after paper submission.
